@@ -19,13 +19,13 @@ public class Profesor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_profesor;
 
-    @Column(name = "num_empleado", length = 20, nullable = false, unique = true)
-    private String numEmpleado;
+    @Column(length = 20, nullable = false, unique = true)
+    private String num_empleado;
 
     @Column(length = 100)
     private String especialidad;
 
     @OneToOne
-    @JoinColumn(name = "id_usuario", nullable = false, unique = true)
+    @JoinColumn(name = "FK_id_usuario", nullable = false, unique = true)
     private Usuario usuario;
 }

@@ -17,19 +17,16 @@ import mx.edu.utez.calificacionesweb.model.profesor.Profesor;
 public class Materia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id_Materia;
+    private Long id_materia;
 
     @Column(length = 120, nullable = false)
     private String nombre;
 
-    @Column(length = 20, nullable = false, unique = true)
-    private String clave;
+    @Column(nullable = false)
+    private int cuatrimestre;
 
     @Column(nullable = false)
-    private Integer cuatrimestre;
-
-    @Column(nullable = false)
-    private Integer creditos;
+    private int creditos;
 
     @ManyToOne
     @JoinColumn(name = "id_carrera", nullable = false)

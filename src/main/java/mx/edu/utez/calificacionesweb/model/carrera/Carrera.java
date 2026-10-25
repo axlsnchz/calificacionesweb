@@ -18,7 +18,8 @@ public class Carrera {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 50)
     private String nombre;
 
-    private int numCuatrimestres;
+    private int num_cuatrimestres;
 }

@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "Usuario")
@@ -18,14 +18,18 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_usuario;
 
+    @Column(length = 80)
     private String nombre;
 
+    @Column(length = 100)
     private String apellidos;
 
+    @Column(length = 120)
     private String correo;
 
+    @Column(length = 12)
     private String contraseña;
 
     @Enumerated(EnumType.STRING)
@@ -33,5 +37,5 @@ public class Usuario {
 
     private boolean activo;
 
-    private Date fechaRegistro;
+    private LocalDate fecha_registro;
 }

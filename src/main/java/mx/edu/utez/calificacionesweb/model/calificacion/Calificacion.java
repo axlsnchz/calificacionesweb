@@ -24,35 +24,32 @@ public class Calificacion {
     private Long id_calificacion;
 
     @Column(nullable = false)
-    private Float calificacion;
+    private double calificacion;
 
-    @Column(name = "fecha_registro", nullable = false, updatable = false)
-    private LocalDateTime fechaRegistro;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime fecha_registro;
 
-    @Column(name = "fecha_modificacion")
-    private LocalDateTime fechaModificacion;
+    private LocalDateTime fecha_modificacion;
 
-    // Muchas calificaciones pertenecen a un alumno
     @ManyToOne
-    @JoinColumn(name = "id_alumno", nullable = false)
+    @JoinColumn(name = "FK_id_alumno", nullable = false)
     private Alumno alumno;
 
-    // Muchas calificaciones pertenecen a una unidad
     @ManyToOne
-    @JoinColumn(name = "id_unidad", nullable = false)
+    @JoinColumn(name = "FK_id_unidad", nullable = false)
     private Unidad unidad;
 
     @ManyToOne
-    @JoinColumn(name = "id_profesor", nullable = false)
+    @JoinColumn(name = "FK_id_profesor", nullable = false)
     private Profesor profesor;
 
     @PrePersist
     protected void alRegistrar() {
-        fechaRegistro = LocalDateTime.now();
+        fecha_registro = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void alModificar() {
-        fechaModificacion = LocalDateTime.now();
+        fecha_modificacion = LocalDateTime.now();
     }
 }

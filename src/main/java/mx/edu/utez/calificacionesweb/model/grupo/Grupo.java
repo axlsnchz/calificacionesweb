@@ -21,7 +21,7 @@ public class Grupo {
 
     private String letra;
 
-    private Integer cuatrimestre_actual;
+    private int cuatrimestre_actual;
 
     @Column(length = 30)
     private String estado;
