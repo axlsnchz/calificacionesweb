@@ -12,4 +12,8 @@ public interface UnidadRepository extends JpaRepository<Unidad,Long> {
     List<Unidad> findByMateriaOrderByNumeroAsc(Materia materia);
 
     boolean existsByMateriaAndNumero(Materia materia, Integer numero);
+
+    boolean existsByMateriaIdAndNumero(Long materiaId, Integer numero);
+    List<Unidad> findByMateriaIdOrderByNumeroAsc(Long materiaId);
+
 }

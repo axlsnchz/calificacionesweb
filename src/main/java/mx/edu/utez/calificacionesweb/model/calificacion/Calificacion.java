@@ -47,7 +47,8 @@ public class Calificacion {
     protected void alRegistrar() {
         fecha_registro = LocalDateTime.now();
     }
-
+    @Transient
+    private String resultado;
     @PreUpdate
     protected void alModificar() {
         fecha_modificacion = LocalDateTime.now();
