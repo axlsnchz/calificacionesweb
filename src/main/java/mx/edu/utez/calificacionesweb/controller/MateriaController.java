@@ -1,12 +1,12 @@
-package com.escuela.calificaciones.controller;
+package mx.edu.utez.calificacionesweb.controller;
 
-import com.escuela.calificaciones.dto.MateriaRequest;
-import com.escuela.calificaciones.dto.MateriaResponse;
-import com.escuela.calificaciones.dto.UnidadResponse;
-import com.escuela.calificaciones.service.MateriaService;
-import com.escuela.calificaciones.service.UnidadService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityNotFoundException;
+import mx.edu.utez.calificacionesweb.model.carrera.Carrera;
+import mx.edu.utez.calificacionesweb.model.materia.Materia;
+import mx.edu.utez.calificacionesweb.model.profesor.Profesor;
+import mx.edu.utez.calificacionesweb.repository.carrera.CarreraRepository;
+import mx.edu.utez.calificacionesweb.repository.materia.MateriaRepository;
+import mx.edu.utez.calificacionesweb.repository.profesor.ProfesorRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,31 +15,58 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/materias")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class MateriaController {
 
-    private final MateriaService materiaService;
-    private final UnidadService unidadService;
+    private final MateriaRepository materiaRepository;
+    private final CarreraRepository carreraRepository;
+    private final ProfesorRepository profesorRepository;
+
+    public MateriaController(
+            MateriaRepository materiaRepository,
+            CarreraRepository carreraRepository,
+            ProfesorRepository profesorRepository) {
+        this.materiaRepository = materiaRepository;
+        this.carreraRepository = carreraRepository;
+        this.profesorRepository = profesorRepository;
+    }
 
     @PostMapping
-    public ResponseEntity<MateriaResponse> crear(@Valid @RequestBody MateriaRequest request) {
-        MateriaResponse creada = materiaService.crear(request);
+    public ResponseEntity<Materia> crear(@RequestBody Materia materia) {
+        if (materia.getCarrera() == null || materia.getCarrera().getId() == null) {
+            throw new IllegalStateException("La carrera es obligatoria");
+        }
+
+        Carrera carrera = carreraRepository.findById(materia.getCarrera().getId())
+                .orElseThrow(() -> new EntityNotFoundException("La carrera no existe"));
+        materia.setCarrera(carrera);
+
+        if (materia.getProfesor() != null && materia.getProfesor().getId_profesor() != null) {
+            Profesor profesor = profesorRepository.findById(materia.getProfesor().getId_profesor())
+                    .orElseThrow(() -> new EntityNotFoundException("El profesor no existe"));
+            materia.setProfesor(profesor);
+        }
+
+        Materia creada = materiaRepository.save(materia);
         return ResponseEntity.status(HttpStatus.CREATED).body(creada);
     }
 
     @GetMapping
-    public ResponseEntity<List<MateriaResponse>> listar() {
-        return ResponseEntity.ok(materiaService.listar());
+    public ResponseEntity<List<Materia>> listar() {
+        return ResponseEntity.ok(materiaRepository.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Materia> obtenerPorId(@PathVariable Long id) {
+        Materia materia = materiaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("La materia no existe"));
+        return ResponseEntity.ok(materia);
     }
 
     @GetMapping("/carrera/{carreraId}")
-    public ResponseEntity<List<MateriaResponse>> porCarrera(@PathVariable Integer carreraId) {
-        return ResponseEntity.ok(materiaService.listarPorCarrera(carreraId));
-    }
-
-    @GetMapping("/{id}/unidades")
-    public ResponseEntity<List<UnidadResponse>> unidades(@PathVariable Integer id) {
-        return ResponseEntity.ok(unidadService.listarPorMateria(id));
+    public ResponseEntity<List<Materia>> porCarrera(@PathVariable Long carreraId) {
+        Carrera carrera = carreraRepository.findById(carreraId)
+                .orElseThrow(() -> new EntityNotFoundException("La carrera no existe"));
+        return ResponseEntity.ok(materiaRepository.findByCarrera(carrera));
     }
 }
