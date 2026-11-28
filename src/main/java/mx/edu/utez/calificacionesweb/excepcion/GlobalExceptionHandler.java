@@ -9,18 +9,17 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleBadRequest(IllegalArgumentException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage()));
+    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleNotFound(EntityNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> handleBadRequest(IllegalArgumentException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", ex.getMessage()));
     }
 

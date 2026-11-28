@@ -6,6 +6,7 @@ import mx.edu.utez.calificacionesweb.model.materia.Materia;
 import mx.edu.utez.calificacionesweb.repository.carrera.CarreraRepository;
 import mx.edu.utez.calificacionesweb.repository.materia.MateriaRepository;
 import mx.edu.utez.calificacionesweb.repository.unidad.UnidadRepository;
+import mx.edu.utez.calificacionesweb.service.CarreraService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,22 +25,22 @@ public class CarreraController {
     private final CarreraRepository carreraRepository;
     private final MateriaRepository materiaRepository;
     private final UnidadRepository unidadRepository;
+    private final CarreraService carreraService;
 
     public CarreraController(
             CarreraRepository carreraRepository,
             MateriaRepository materiaRepository,
-            UnidadRepository unidadRepository) {
+            UnidadRepository unidadRepository,
+            CarreraService carreraService) {
         this.carreraRepository = carreraRepository;
         this.materiaRepository = materiaRepository;
         this.unidadRepository = unidadRepository;
+        this.carreraService = carreraService;
     }
 
     @PostMapping
     public ResponseEntity<Carrera> crear(@RequestBody Carrera carrera) {
-        validar(carrera);
-        carrera.setId(null);
-        Carrera creada = carreraRepository.save(carrera);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        return ResponseEntity.status(HttpStatus.CREATED).body(carreraService.crear(carrera));
     }
 
     @GetMapping
@@ -60,7 +61,7 @@ public class CarreraController {
                 .orElseThrow(() -> new EntityNotFoundException("La carrera no existe"));
         validar(datos);
         carrera.setNombre(datos.getNombre());
-        carrera.setNum_cuatrimestres(datos.getNum_cuatrimestres());
+        carrera.setNumCuatrimestres(datos.getNumCuatrimestres());
         return ResponseEntity.ok(carreraRepository.save(carrera));
     }
 
@@ -86,7 +87,7 @@ public class CarreraController {
         if (carrera.getNombre() == null || carrera.getNombre().isBlank()) {
             throw new IllegalStateException("El nombre de la carrera es obligatorio");
         }
-        if (carrera.getNum_cuatrimestres() <= 0) {
+        if (carrera.getNumCuatrimestres() <= 0) {
             throw new IllegalStateException("El numero de cuatrimestres debe ser mayor a 0");
         }
     }

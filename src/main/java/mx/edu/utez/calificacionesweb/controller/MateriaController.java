@@ -75,9 +75,9 @@ public class MateriaController {
     }
 
     private void validarCuatrimestre(int cuatrimestre, Carrera carrera) {
-        if (cuatrimestre < 1 || cuatrimestre > carrera.getNum_cuatrimestres()) {
+        if (cuatrimestre < 1 || cuatrimestre > carrera.getNumCuatrimestres()) {
             throw new IllegalStateException(
-                    "El cuatrimestre debe estar entre 1 y " + carrera.getNum_cuatrimestres());
+                    "El cuatrimestre debe estar entre 1 y " + carrera.getNumCuatrimestres());
         }
     }
 
