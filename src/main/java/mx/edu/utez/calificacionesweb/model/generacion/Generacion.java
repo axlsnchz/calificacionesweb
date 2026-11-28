@@ -22,7 +22,8 @@ public class Generacion {
     @Column(length = 50)
     private  String nombre;
 
-    private LocalDate fecha_inicio;
+    private LocalDate fechaInicio;
+
 
     @ManyToOne
     @JoinColumn(name = "FK_id_carrera")

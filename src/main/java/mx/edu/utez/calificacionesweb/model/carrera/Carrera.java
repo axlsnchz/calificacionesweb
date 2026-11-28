@@ -21,5 +21,8 @@ public class Carrera {
     @Column(length = 50)
     private String nombre;
 
-    private int num_cuatrimestres;
+    @Column(length = 20, nullable = false, unique = true)
+    private String clave;
+
+    private int numCuatrimestres;
 }
