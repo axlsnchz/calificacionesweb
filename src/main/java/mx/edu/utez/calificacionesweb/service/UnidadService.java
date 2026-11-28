@@ -1,7 +1,6 @@
 package mx.edu.utez.calificacionesweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import mx.edu.utez.calificacionesweb.excepcion.GlobalExceptionHandler;
 import mx.edu.utez.calificacionesweb.model.materia.Materia;
 import mx.edu.utez.calificacionesweb.model.unidad.Unidad;
 import mx.edu.utez.calificacionesweb.repository.materia.MateriaRepository;
@@ -24,9 +23,10 @@ public class UnidadService {
     @Transactional
     public Unidad crear(Long materiaId, Unidad unidad) {
         Materia materia = materiaRepository.findById(materiaId)
-                .orElseThrow(() -> new IllegalArgumentException("La materia con ID " + materiaId + " no existe"));
+                .orElseThrow(() -> new EntityNotFoundException("La materia con ID " + materiaId + " no existe"));
         if (unidadRepository.existsByMateriaIdAndNumero(materiaId, unidad.getNumero())) {
-            throw new EntityNotFoundException("Ya existe una unidad con el número " + unidad.getNumero() + " en esta materia");
+            throw new IllegalStateException(
+                    "Ya existe una unidad con el número " + unidad.getNumero() + " en esta materia");
         }
 
         unidad.setMateria(materia);

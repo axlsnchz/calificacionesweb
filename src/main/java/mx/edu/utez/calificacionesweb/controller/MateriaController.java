@@ -41,14 +41,44 @@ public class MateriaController {
                 .orElseThrow(() -> new EntityNotFoundException("La carrera no existe"));
         materia.setCarrera(carrera);
 
-        if (materia.getProfesor() != null && materia.getProfesor().getId_profesor() != null) {
-            Profesor profesor = profesorRepository.findById(materia.getProfesor().getId_profesor())
+        if (materia.getProfesor() == null || materia.getProfesor().getId_profesor() == null) {
+            throw new IllegalStateException("El profesor es obligatorio");
+        }
+        Profesor profesor = profesorRepository.findById(materia.getProfesor().getId_profesor())
+                .orElseThrow(() -> new EntityNotFoundException("El profesor no existe"));
+        materia.setProfesor(profesor);
+
+        validarCuatrimestre(materia.getCuatrimestre(), carrera);
+
+        Materia creada = materiaRepository.save(materia);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Materia> actualizar(@PathVariable Long id, @RequestBody Materia datos) {
+        Materia materia = materiaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("La materia no existe"));
+
+        validarCuatrimestre(datos.getCuatrimestre(), materia.getCarrera());
+
+        materia.setNombre(datos.getNombre());
+        materia.setCreditos(datos.getCreditos());
+        materia.setCuatrimestre(datos.getCuatrimestre());
+
+        if (datos.getProfesor() != null && datos.getProfesor().getId_profesor() != null) {
+            Profesor profesor = profesorRepository.findById(datos.getProfesor().getId_profesor())
                     .orElseThrow(() -> new EntityNotFoundException("El profesor no existe"));
             materia.setProfesor(profesor);
         }
 
-        Materia creada = materiaRepository.save(materia);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        return ResponseEntity.ok(materiaRepository.save(materia));
+    }
+
+    private void validarCuatrimestre(int cuatrimestre, Carrera carrera) {
+        if (cuatrimestre < 1 || cuatrimestre > carrera.getNum_cuatrimestres()) {
+            throw new IllegalStateException(
+                    "El cuatrimestre debe estar entre 1 y " + carrera.getNum_cuatrimestres());
+        }
     }
 
     @GetMapping

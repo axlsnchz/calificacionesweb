@@ -73,6 +73,9 @@ public class CalificacionService {
             throw new IllegalStateException("La carrera de la materia no coincide con la carrera del grupo/generación del alumno");
         }
 
+        validarNota(nota);
+        validarCuatrimestreActual(alumno, materia);
+
         if (calificacionRepository.existsByAlumnoIdAndUnidadId(alumnoId, unidadId)) {
             throw new IllegalStateException("El alumno ya tiene calificación registrada en esta unidad; debe usarse la modificación");
         }
@@ -85,6 +88,19 @@ public class CalificacionService {
         calificacion.setResultado(nota >= 7.0 ? "APROBADO" : "REPROBADO");
 
         return calificacionRepository.save(calificacion);
+    }
+
+    private void validarNota(double nota) {
+        if (nota < 0 || nota > 10) {
+            throw new IllegalArgumentException("La calificaci\u00f3n debe estar entre 0 y 10");
+        }
+    }
+
+    private void validarCuatrimestreActual(Alumno alumno, Materia materia) {
+        if (alumno.getGrupo() == null
+                || alumno.getGrupo().getCuatrimestre_actual() != materia.getCuatrimestre()) {
+            throw new IllegalStateException("Solo se puede calificar materias del cuatrimestre actual del grupo");
+        }
     }
 
     @Transactional
@@ -111,6 +127,9 @@ public class CalificacionService {
         if (materia.getProfesor() == null || !materia.getProfesor().getId_profesor().equals(profesor.getId_profesor())) {
             throw new IllegalStateException("El profesor no imparte la materia correspondiente");
         }
+
+        validarNota(nuevaNota);
+        validarCuatrimestreActual(calificacion.getAlumno(), materia);
 
         calificacion.setCalificacion(nuevaNota);
         calificacion.setProfesor(profesor);

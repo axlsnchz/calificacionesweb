@@ -1,5 +1,6 @@
 package mx.edu.utez.calificacionesweb.model.usuario;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Usuario {
     private String correo;
 
     @Column(length = 12)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String contraseña;
 
     @Enumerated(EnumType.STRING)
